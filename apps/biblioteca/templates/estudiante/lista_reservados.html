@@ -1,0 +1,51 @@
+{% extends 'body.html' %}
+
+
+{% block content %}
+    <div class="row">
+        {% for object in object_list %}
+            <div class="col-md-6">
+                <input type="hidden" value="{{ object.id }}">
+                <div class="card card-default">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-bullhorn"></i>
+                            Reserva realiza el {{ object.date_reservation|date }}
+                        </h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        {% for foo in object.books.all %}
+                            {% if foo.state == "Prestado" %}
+                                <div class="callout bg-success">
+                                    <input type="hidden" value="{{ foo.id }}">
+                                    <h5> {{ foo.book_instance.title }}</h5>
+                                    <p> {{ foo.book_instance.author }}.</p>
+                                    <button class="btn btn-primary">Devolver Libro</button>
+                                </div>
+                            {% else %}
+                                <div class="callout bg-secondary">
+
+                                    <h5> {{ foo.book_instance.title }}</h5>
+                                    <p> {{ foo.book_instance.author }}.</p>
+
+                                </div>
+                            {% endif %}
+
+                        {% endfor %}
+                    </div>
+                    <div class="card-footer">
+                        <h3 class="card-title">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Fecha de Devolucion {{ object.date_end|date }}
+                        </h3>
+                    </div>
+                </div>
+
+            </div>
+        {% endfor %}
+
+    </div>
+
+
+{% endblock %}

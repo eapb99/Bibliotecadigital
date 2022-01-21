@@ -1,0 +1,83 @@
+{% load static %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Lista de Reservas temporales</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th style="width: 45%">Nombre</th>
+                <th style="width: 5%">Eliminar</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if prestamos %}
+                {% for prestamo in prestamos %}
+                    <tr>
+
+                        <td>{{ prestamo.book_instance.title }}</td>
+                        <td>
+                            <button class="del btn btn-danger" data-id="{{ prestamo.id }}"><i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3">
+                        <div class="alert alert-danger text-center"> Sin Reservas Temporales</div>
+                    </td>
+                </tr>
+            {% endif %}
+            </tbody>
+
+        </table>
+    </div>
+    <div class="card-footer">
+        <button class="btn btn-primary enviar">Realizar reserva</button>
+    </div>
+    <!-- /.card-body -->
+</div>
+<script src="{% static 'js/functions.js' %}"></script>
+<script>
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    const token = getCookie('csrftoken');
+    document.querySelector(".enviar").addEventListener("click", () => {
+        let id = document.querySelectorAll(('.del'))
+        let Lid = []
+        for (let data of id) {
+            Lid.push(data.dataset.id)
+        }
+        console.log("{{ reservas }}")
+        fetch("{% url 'reservas' %}", {
+            method: "POST",
+            body: JSON.stringify({
+                "id": Lid
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': token
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        }).then(res => res.json())
+            .then(datos => {
+                if (datos.hasOwnProperty('data')) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Reserva',
+                        showConfirmButton: false,
+                        timer: 2500,
+                        text: 'Libros reservados correctamente',
+                    })
+                    sleep(2500).then(() => {
+                        location.reload();
+                    });
+                }
+            })
+    })
+</script>

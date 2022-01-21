@@ -1,0 +1,74 @@
+{% load static %}
+{% load widget_tweaks %}
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-chart-bar"></i>
+            {{ title }}
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="text-center">Listado de noticias</h2>
+                <table id="table" width="100%" class="cell-border">
+                    <thead>
+                    <tr>
+                        <th scope="col">Código</th>
+                        <th scope="col">Título</th>
+                        <th scope="col">Author</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Option</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <a class="btn btn-primary btn-flat btnAdd" style="color: white;">
+            <i class="fas fa-plus"></i> Nuevo registro
+        </a>
+        <a href="{{ list_url }}" class="btn btn-success btn-flat">
+            <i class="fas fa-sync"></i> Actualizar
+        </a>
+    </div>
+</div>
+
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <form method="post">
+        {% csrf_token %}
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <b><i class="fas fa-search"></i> <span></span></b>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <input name="action" type="hidden" value="add" id="hide">
+                        {% for foo in form.visible_fields %}
+                            <div class="form-group">
+                                <label>{{ foo.label }}</label>
+                                {{ foo| add_class:'form-control' }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-flat btn-block"><i class="fas fa-save"></i>
+                        Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<script src="{% static 'js/functions.js' %}"></script>

@@ -1,0 +1,74 @@
+<div class="row">
+    <div class="col-7">
+        <div class="row" id="content-book">
+
+        </div>
+
+    </div>
+    <div class="col-5">
+        {% include 'reservas.html' %}
+    </div>
+</div>
+
+
+<script>
+    let content = document.querySelector('#content-book')
+    fetch("http://127.0.0.1:8000/dashboard/book/")
+        .then(res => res.json())
+        .then(data => {
+            for (let datos of data) {
+                let plantilla = `<div class="col-lg-6">
+                    <div class="card card-primary card-outline">
+                        <div class="card-body box-profile">
+                            <div class="text-center">
+                                <img class="profile-user-img img-fluid img-circle"
+                                     src="https://st.depositphotos.com/1654249/3299/i/950/depositphotos_32990241-stock-photo-blank-book-cover-over-white.jpg"
+                                     alt="User profile picture">
+                            </div>
+
+                            <h3 class="profile-username text-center">${datos['title']}</h3>
+
+                            <p class="text-muted text-center">${datos['author']}  </p>
+
+                            <ul class="list-group list-group-unbordered mb-3">
+                                <li class="list-group-item">
+                                    {% csrf_token %}
+                                    <b>Copias Disponibles</b> <a class="float-right">${datos['quantity']}</a>
+                                </li>
+                            </ul>
+
+                            <a href="/dashboard/detail/${datos['id']}" class="btn btn-primary btn-block"><b>Ver Detalle de Libro</b></a>
+                        </div>
+                    </div>
+                </div>`
+                content.innerHTML += plantilla
+            }
+        })
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+
+    let botones = document.querySelectorAll('.del')
+    for (let btn of botones) {
+        btn.addEventListener('click', () => {
+            let id = btn.dataset.id
+            fetch("{% url 'Del' '1234' %}".replace('1234', id))
+                .then(res => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Reservacion temporal',
+                        showConfirmButton: false,
+                        timer: 2500,
+                        text: `Libro reservado temporalmente eliminado`,
+                    })
+                    sleep(2500).then(() => {
+                        location.reload();
+                    });
+
+
+                })
+        })
+    }
+</script>

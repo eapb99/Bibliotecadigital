@@ -1,0 +1,104 @@
+{% extends 'body.html' %}
+
+
+
+{% block content %}
+
+    <div class="card card-solid">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-sm-6">
+                    <h3 class="d-inline-block d-sm-none">LOWA Men’s Renegade GTX Mid Hiking Boots Review</h3>
+                    <div class="col-12">
+                        <img src="https://us.123rf.com/450wm/avectors/avectors1804/avectors180400158/99163990-plantilla-de-dise%C3%B1o-vertical-blanco-en-blanco-de-la-cubierta-de-libro-modelo-de-portada-de-libro-de-.jpg?ver=6"
+                             class="product-image" alt="Product Image">
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <h3 class="my-3">{{ object.title }}</h3>
+                    <p>{{ object.author }} </p>
+                    <hr>
+                    <div class="bg-gray py-2 px-3 mt-4">
+                        <h4 class="mt-0">
+                            <small>Copias disponibles</small>
+                        </h4>
+                        <h2 class="mb-0">
+                            {{ object.quantity }}
+                        </h2>
+
+                    </div>
+
+                    <div class="mt-4">
+                        <div class="btn btn-primary btn-lg btn-flat btn-add">
+                            <i class="fas fa-cart-plus fa-lg mr-2"></i>
+                            <form method="post">
+                                {% csrf_token %}
+                                Agregar Libro Para Reservar
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.card-body -->
+    </div>
+{% endblock %}
+
+{% block javascript %}
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const csrftoken = getCookie('csrftoken');
+        document.querySelector('.btn-add').addEventListener('click', () => {
+            let id = "{{ object.id }}"
+            fetch("{{ fetch }}",
+                {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        "book_instance": id,
+                        "reader": "{{ user.id }}"
+                    }),
+                    headers: {'X-CSRFToken': csrftoken, 'Content-Type': 'application/json'},
+                    mode: 'same-origin'
+
+                }
+            ).then(res => res.json())
+                .then(data => {
+                    if (data.hasOwnProperty('data')) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'ERROR',
+                            showConfirmButton: false,
+                            timer: 2500,
+                            text: `${data['data']}`,
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Reserva',
+                            showConfirmButton: false,
+                            timer: 2500,
+                            text: 'Libro reservado temporalmente, confirme la reservacion',
+                        })
+
+                    }
+                })
+        })
+    </script>
+{% endblock %}

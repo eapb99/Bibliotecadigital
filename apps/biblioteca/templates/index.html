@@ -1,0 +1,10 @@
+{% extends 'body.html' %}
+
+{% block content %}
+    {% if user.groups.all.0.name == "Estudiante" %}
+        {% include 'estudiante/list__book.html' %}
+    {% else %}
+        {% include 'administrador/list_book.html' %}
+    {% endif %}
+
+{% endblock %}
